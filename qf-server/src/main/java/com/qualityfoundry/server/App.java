@@ -1,13 +1,6 @@
 package com.qualityfoundry.server;
 
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.servlet.DefaultServlet;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
-import org.springframework.web.servlet.DispatcherServlet;
 
 /**
  * Contains the entry point of the QF server.
@@ -25,22 +18,14 @@ public class App
     	// Create a Spring context.
     	AnnotationConfigWebApplicationContext rootSpringContext = new AnnotationConfigWebApplicationContext();
     	rootSpringContext.setConfigLocation(AppConfig.class.getName());
+    	rootSpringContext.refresh();
     	
-        Server jetty = new Server();
-        jetty.setStopAtShutdown(true);
-        
-        ServerConnector jettyConnector = new ServerConnector(jetty);
-        jettyConnector.setPort(8000);
-        jetty.addConnector(jettyConnector);
-        
-        ServletContextHandler context = new ServletContextHandler();
-        context.setContextPath("/");
-        context.setResourceBase(App.class.getClassLoader().getResource("web").toExternalForm());
-        context.addServlet(new ServletHolder(new DefaultServlet()), "/");
-        context.addServlet(new ServletHolder(new DispatcherServlet(rootSpringContext)), "/qf-server/*");
-        context.addEventListener(new ContextLoaderListener(rootSpringContext));
-        jetty.setHandler(context);
-        
-        jetty.start();
+    	// Wait for key press.
+    	// TODO: Replace this with an actual service (Windows) and daemon (Unix) implementation.
+    	System.out.append("Press enter to terminate.");
+    	System.in.read();
+    	
+    	// Clean up the Spring context.
+    	rootSpringContext.close();
     }
 }

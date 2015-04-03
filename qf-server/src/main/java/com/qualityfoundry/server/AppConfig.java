@@ -2,23 +2,40 @@ package com.qualityfoundry.server;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.socket.WebSocketHandler;
-import org.springframework.web.socket.config.annotation.EnableWebSocket;
-import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
-import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
+/**
+ * The root application Spring configuration class.
+ * @author jonathanrt
+ *
+ */
 @Configuration
-@EnableWebSocket
-public class AppConfig implements WebSocketConfigurer {
+public class AppConfig {
 
-	@Override
-	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-		registry.addHandler(qfWebSocketHandler(), "ws").withSockJS();		
+	/**
+	 * Creates a static content server on port 8000.
+	 * @return A static content server.
+	 */
+	@Bean
+	public StaticContentServer staticContentServer() {
+		return new StaticContentServer(8000);
 	}
 	
+	/**
+	 * Creates a web socket server on port 8001.
+	 * @return A web socket server.
+	 */
 	@Bean
-	public WebSocketHandler qfWebSocketHandler() {
-		return new QfWebSocketHandler();
+	public WebSocketServer webSocketServer1() {
+		return new WebSocketServer(8001);
 	}
-
+	
+	/**
+	 * Creates a web socket server on port 8002.
+	 * @return A web socket server.
+	 */
+	@Bean
+	public WebSocketServer webSocketServer2() {
+		return new WebSocketServer(8002);
+	}
+	
 }
